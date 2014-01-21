@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Shaman UI</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/s/bootstrap.min.css">
+	<link rel="stylesheet" href="/s/bootstrap-theme.min.css">
+<style>
+
+svg {
+	font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.line {
+	fill: none;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+</style>
+
+</head>
+<body>
+	<div class="navbar navbar-inverse" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Shaman</a>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="#">Nodes</a></li>
+					<li><a href="#processes">Processes</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="nodes" class="container section">
+		<div class="panel panel-default">
+			<div class="panel-heading">Connected nodes</div>
+			<div class="panel-body">This table lists all nodes currently connected to Shaman.</div>
+
+			<table id="nodes-table" class="table table-striped">
+			<thead>
+				<tr>
+					<th data-name="name">Name</th>
+					<th data-name="release">Release</th>
+					<th data-name="alien_started">Alien started?</th>
+					<th data-name="shaman_enabled">Shaman enabled?</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			<tfoot><tr><td colspan="4">
+				<div class="btn-group">
+					<div class="btn-group">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+							Connect to node
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu"><li style="padding:15px;padding-bottom:0">
+							<!-- @todo better style -->
+							<form id="nodes-connect">
+								<input name="name" type="text" placeholder="Node name"/>
+								<input name="cookie" type="text" placeholder="Cookie"/>
+								<input type="submit" value="Connect to node"/>
+							</form>
+						</li></ul>
+					</div>
+				</div>
+			</td></tr></tfoot>
+			</table>
+		</div>
+	</div>
+
+	<div id="processes" class="container section">
+		<div class="panel panel-default">
+			<div class="panel-heading">Processes</div>
+			<div class="panel-body">Listing processes for the node <span class="node"></span>.</div>
+
+			<table id="processes-table" class="table table-striped">
+			<thead>
+				<tr>
+					<th data-name="pid">Pid</th>
+					<th data-name="init">Initial call</th>
+					<th data-name="reds">Reductions</th>
+					<th data-name="new_reds">New reductions</th>
+					<th data-name="mem">Memory</th>
+					<th data-name="msgq">MsgQ</th>
+					<th data-name="current">Current function</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			</table>
+		</div>
+
+		<div class="modal fade" id="processes-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">Process <span class="pid"></span></h4>
+			</div>
+			<div class="modal-body">
+				<div class="panel panel-default">
+					<div class="panel-heading">Overview</div>
+
+					<table class="table table-striped">
+					<tbody>
+						<tr><th>Initial call</th><td class="data" data-name="init"></td></tr>
+						<tr><th>Current function</th><td class="data" data-name="current"></td></tr>
+						<tr><th>Registered name</th><td class="data" data-name="reg_name"></td></tr>
+						<tr><th>Status</th><td class="data" data-name="status"></td></tr>
+						<tr><th>Message queue size</th><td class="data" data-name="msgq"></td></tr>
+						<tr><th>Priority</th><td class="data" data-name="priority"></td></tr>
+						<tr><th>Traps exits</th><td class="data" data-name="trap_exit"></td></tr>
+					</tbody>
+					</table>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">Reductions</div>
+
+					<table class="table table-striped">
+					<tbody>
+						<tr><th>Total</th><td class="data" data-name="reds"></td></tr>
+						<tr><th>New</th><td class="data" data-name="new_reds"></td></tr>
+						<tr><th>Last 60s</th><td><svg id="processes-modal-reds-history"></svg></td></tr>
+					</tbody>
+					</table>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">Memory and GC</div>
+
+					<table class="table table-striped">
+					<tbody>
+						<tr><th>Memory</th><td class="data" data-name="mem"></td></tr>
+						<tr><th>GC min heap size</th><td class="data" data-name="gc_min_heap_size"></td></tr>
+						<tr><th>GC fullsweep after</th><td class="data" data-name="gc_fullsweep_after"></td></tr>
+					</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+		</div>
+		</div>
+	</div>
+
+	<script src="/s/jquery-2.0.3.min.js"></script>
+	<script src="/s/bootstrap.min.js"></script>
+	<script src="/s/d3.v3.min.js" charset="utf-8"></script>
+	<script src="/s/jquery.tinysort.min.js"></script>
+	<script src="/s/shaman.js"></script>
+</body>
+</html>
