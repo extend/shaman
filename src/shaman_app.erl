@@ -33,6 +33,9 @@ start(_Type, _Args) ->
 	alien:start_probe(processes, [],
 		{call, shaman, pub},
 		{process, shaman_processes, []}),
+	alien:start_probe(memory, [],
+		{call, shaman, pub},
+		{process, shaman_memory, []}),
 	shaman_sup:start_link().
 
 stop(_State) ->
