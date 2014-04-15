@@ -21,13 +21,8 @@
 -export([sub/0]).
 -export([sub/1]).
 
-%% @todo ok this is a bit confusing
-pub({shaman, Node, Name}, Data) ->
-	pub(Node, Name, Data);
 pub(Name, Data) ->
-	_ = [Pid ! {shaman, Name, Data}
-		|| {Pid, sub} <- ets:tab2list(shaman_subs)],
-	ok.
+	pub(node(), Name, Data).
 
 pub(Node, Name, Data) ->
 	_ = [Pid ! {shaman, Node, Name, Data}

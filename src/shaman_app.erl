@@ -24,13 +24,13 @@ start(_Type, _Args) ->
 		{'_', [
 			{"/", cowboy_static, {priv_file, shaman, "index.html"}},
 			{"/s/[...]", cowboy_static, {priv_dir, shaman, "static"}},
-			{"/ws", ws_handler, []}
+			{"/ws", shaman_ws, []}
 		]}
 	]),
 	{ok, _} = cowboy:start_http(http, 100, [{port, 8080}], [
 		{env, [{dispatch, Dispatch}]}
 	]),
-	alien:start_probe({shaman, node(), processes}, [],
+	alien:start_probe(processes, [],
 		{call, shaman, pub},
 		{process, shaman_processes, []}),
 	shaman_sup:start_link().

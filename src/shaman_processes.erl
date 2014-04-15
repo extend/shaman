@@ -87,7 +87,7 @@ handle_info(update, State=#state{ref=Ref, interval=Interval}) ->
 			{<<"status">>, a(Status)},
 			{<<"trap_exit">>, a(TrapExit)}
 		]
-	end || P <- processes()]),
+	end || P <- processes(), is_process_alive(P)]),
 	_ = erlang:send_after(Interval, self(), update),
 	{noreply, State};
 handle_info(_Info, State) ->

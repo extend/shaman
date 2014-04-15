@@ -12,7 +12,7 @@
 %% ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 %% OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
--module(ws_handler).
+-module(shaman_ws).
 -behaviour(cowboy_websocket_handler).
 
 -export([init/3]).
@@ -40,29 +40,16 @@ websocket_handle({text, JSON}, Req, State) ->
 			{reply, {text, jsx:encode(Resp)}, Req, State}
 	end.
 
-%% Events coming from shaman itself.
-websocket_info({shaman, Name, Data}, Req, State) ->
-	{reply, {text, jsx:encode([
-		[
-			{<<"t">>, <<"data">>},
-			{<<"n">>, atom_to_binary(Name, utf8)},
-			{<<"d">>, Data}
-		]
-	])}, Req, State};
-%% Events coming from alien probes.
 websocket_info({shaman, Node, Name, Data}, Req, State) ->
 	{reply, {text, jsx:encode([
 		[
 			{<<"t">>, <<"data">>},
+			{<<"o">>, atom_to_binary(Node, utf8)},
 			{<<"n">>, atom_to_binary(Name, utf8)},
-			{<<"d">>, [
-				{<<"node">>, atom_to_binary(Node, utf8)},
-				{<<"data">>, Data}
-			]}
+			{<<"d">>, Data}
 		]
 	])}, Req, State};
-websocket_info(Info, Req, State) ->
-	io:format("~p~n", [Info]),
+websocket_info(_, Req, State) ->
 	{noreply, Req, State}.
 
 websocket_terminate(_, _, _) ->
